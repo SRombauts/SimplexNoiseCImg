@@ -1,0 +1,14 @@
+*cmake
+CMakeFiles
+CMakeCache*
+
+Makefile
+
+*.*sdf
+*.sln
+*.suo
+*.vc*
+
+Debug
+Release
+
