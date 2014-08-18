@@ -3,6 +3,8 @@ using namespace cimg_library;
 
 #include <cstdint>
 
+#include "SimplexNoise/SimplexNoise.h"
+
 int main()
 {
 /*
@@ -25,15 +27,16 @@ int main()
     imgf.display("hello imgf");         // Display the image in a display window.
 */
 
-    CImg<float> img(32, 4, 1, 3);       // Define a 32x4 color image with 8 bits per color component.
+    CImg<float> img(1280, 4, 1, 3);     // Define a 1280x4 color image with a float value per color component.
     img.fill(0.f);                      // Set pixel values to 0 (color : black)
     for (int col = 0; col < img.width(); ++col)
     {
-        float x = (float)col / img.width();
-        float color[] = {x, x, x};  // Define the color
+        float x     = (float)col / 60;          // Define a float coordinate associated with the column index
+        float noise = SimplexNoise::noise(x);   // Get the noise value for the coordinate
+        float color[] = {noise, noise, noise};  // Define the color
         img.draw_line(col, 0, col, 3, color);
     }
-    img.display("noise");               // Display the image in a display window.
+    img.display("1D noise");               // Display the image in a display window.
 
     return 0;
 }
