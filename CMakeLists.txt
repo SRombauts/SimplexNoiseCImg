@@ -1,6 +1,10 @@
 cmake_minimum_required (VERSION 2.6)
 project (CImgTest)
 
+if (NOT MSVC)
+    add_definitions (-std=c++0x)  # -std=c++11
+endif ()
+
 add_executable (CImgTest
  main.cpp
  CImg.h
