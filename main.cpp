@@ -19,7 +19,7 @@ int main()
 //  img.save("hello.png");
 
     // Floating point color image (standard 3D color/texture management)
-    CImg<float> imgf(32, 4, 1, 3);      // Define a 32x4 color image with 8 bits per color component.
+    CImg<float> imgf(32, 4, 1, 3);      // Define a 32x4 color image with a float value per color component.
     imgf.fill(0.f);                     // Set pixel values to 0 (color : black)
     float purplef[] = {1.f, 0.f, 1.f};  // Define a purple color
     imgf.draw_point(0, 0, purple);
@@ -27,16 +27,21 @@ int main()
     imgf.display("hello imgf");         // Display the image in a display window.
 */
 
-    CImg<float> img(1280, 4, 1, 3);     // Define a 1280x4 color image with a float value per color component.
+    CImg<float> img(1280, 4*8, 1, 3);   // Define a 1280x32 color image with a float value per color component.
     img.fill(0.f);                      // Set pixel values to 0 (color : black)
-    for (int col = 0; col < img.width(); ++col)
+
+    for (int row = 0; row < 8; ++row)
     {
-        float x     = (float)col / 60;          // Define a float coordinate associated with the column index
-        float noise = SimplexNoise::noise(x);   // Get the noise value for the coordinate
-        float color[] = {noise, noise, noise};  // Define the color
-        img.draw_line(col, 0, col, 3, color);
+        for (int col = 0; col < img.width(); ++col)
+        {
+            float x     = (float)(col + (row * img.width())) / 60;  // Define a float coordinate associated with the column index
+            float noise = SimplexNoise::noise(x);                   // Get the noise value for the coordinate
+            float color[] = {noise, noise, noise};                  // Define the color
+            img.draw_line(col, 0 + (row * 4), col, 3 + (row * 4), color);
+        }
     }
-    img.display("1D noise");               // Display the image in a display window.
+    img.display("1D noise");            // Display the image in a display window.
+//  img.save("res.png");
 
     return 0;
 }
