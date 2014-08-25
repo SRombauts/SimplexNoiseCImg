@@ -2,6 +2,7 @@
 using namespace cimg_library;
 
 #include <cstdint>
+#include <fstream>
 
 #include "SimplexNoise/SimplexNoise.h"
 
@@ -27,21 +28,38 @@ int main()
     imgf.display("hello imgf");         // Display the image in a display window.
 */
 
-    CImg<float> img(1280, 4*8, 1, 3);   // Define a 1280x32 color image with a float value per color component.
-    img.fill(0.f);                      // Set pixel values to 0 (color : black)
+/*
+    CImg<float> img1D(1280, 4*8, 1, 3);   // Define a 1280x32 color image with a float value per color component.
+    img1D.fill(0.f);                      // Set pixel values to 0 (color : black)
 
     for (int row = 0; row < 8; ++row)
     {
-        for (int col = 0; col < img.width(); ++col)
+        for (int col = 0; col < img1D.width(); ++col)
         {
-            float x     = (float)(col + (row * img.width())) / 60;  // Define a float coordinate associated with the column index
-            float noise = SimplexNoise::noise(x);                   // Get the noise value for the coordinate
-            float color[] = {noise, noise, noise};                  // Define the color
-            img.draw_line(col, 0 + (row * 4), col, 3 + (row * 4), color);
+            float x     = (float)(col + (row * img1D.width())) / 60;    // Define a float coordinate associated with the column index
+            float noise = SimplexNoise::noise(x);                       // Get the noise value for the coordinate
+            float color[] = { noise, noise, noise };                    // Define the color
+            img1D.draw_line(col, 0 + (row * 4), col, 3 + (row * 4), color);
         }
     }
-    img.display("1D noise");            // Display the image in a display window.
-//  img.save("res.png");
+    img1D.display("1D noise");            // Display the image in a display window.
+//  img1D.save("map1D.bmp");
+*/
 
-    return 0;
+	CImg<float> img2D(600, 600, 1, 3);   // Define a 600x600 color image with a float value per color component.
+	img2D.fill(0.f);                        // Set pixel values to 0 (color : black)
+
+    for(int row = 0; row < img2D.height(); ++row)
+	{
+		for(int col = 0; col < img2D.width(); ++col)
+		{
+            float noise = SimplexNoise::noise(col / 60.f, row / 60.f);                   // Get the noise value for the coordinate
+			float color[] = { noise, noise, noise };                // Define the color
+			img2D.draw_point(col, row, color);
+		}
+	}
+	img2D.display("2D noise");            // Display the image in a display window.
+//  img2D.save("map2D.bmp");
+
+	return 0;
 }
