@@ -7,6 +7,8 @@ endif ()
 
 add_executable (CImgTest
  main.cpp
+ color.cpp
+ color.h
  CImg.h
  SimplexNoise/SimplexNoise.cpp
  SimplexNoise/SimplexNoise.h
