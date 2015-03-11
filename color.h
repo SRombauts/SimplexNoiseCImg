@@ -30,7 +30,8 @@ color3f lerp(color3f x, color3f y,
              float  ax, float  ay, float a);
 
 /**
- * @param[in]  noise [-1; 1]
- * @param[out] color
+ * @param[in] noise [-1; 1]
+ *
+ * @return color
  */
-void ramp(float noise, color3f& color);
+color3f ramp(float noise);

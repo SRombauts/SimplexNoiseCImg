@@ -35,10 +35,11 @@ color3f lerp(color3f x, color3f y, float ax, float ay, float a)
 
 /**
  * @param[in] noise [-1; 1]
- * @param[in] color
+ * 
+ * @return color
  * @see http://www.blitzbasic.com/codearcs/codearcs.php?code=2415
  */
-void ramp(float noise, color3f& color)
+color3f ramp(float noise)
 {
     static const color3f DarkBlue   (   2,  43,  68 ); // dark blue: deep water
     static const color3f DeepBlue   (   9,  62,  92 ); // deep blue: water
@@ -50,6 +51,7 @@ void ramp(float noise, color3f& color)
     static const color3f Grey       ( 179, 179, 179 ); // grey: rocks
     static const color3f White      ( 255, 255, 255 ); // white: snow
 
+    color3f color;
     if (noise     < -0.500f)
     {
         color = lerp(DarkBlue, DeepBlue, -1.000f, -0.500f, noise);
@@ -82,4 +84,6 @@ void ramp(float noise, color3f& color)
     {
         color = lerp(Grey, White, 0.900f, 1.000f, noise);
     }
+
+    return color;
 }

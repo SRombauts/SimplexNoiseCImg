@@ -1,6 +1,7 @@
 #include "CImg.h"
 using namespace cimg_library;
 
+#include <iostream>
 #include <cstdint>
 #include <fstream>
 
@@ -8,8 +9,12 @@ using namespace cimg_library;
 
 #include "color.h"
 
-int main()
-{
+int main() {
+    float scale     = 400.f;
+    int   offset_x  = 0;
+    int   offset_y  = 0;
+    int   octaves   = 7;
+
 /*
     // Integer color image (standard 2D image/file format)
     CImg<uint8_t> img(32, 4, 1, 3);     // Define a 32x4 color image with 8 bits per color component.
@@ -51,11 +56,10 @@ int main()
 /*
     for(float a = -1.000f; a <= 1.000f; a += 0.1f)
     {
-        color3f color;
-        ramp(a, color); // Define the color
+        const color3f color = ramp(a); // Define the color
     }
 */
-
+/*
     CImg<float> img2D1(1280, 720, 1, 3); // Define a 1280x720 color image with a float value per color component.
     img2D1.fill(0.f);                    // Set pixel values to 0 (color : black)
 
@@ -63,9 +67,8 @@ int main()
     {
         for(int col = 0; col < img2D1.width(); ++col)
         {
-            float noise = SimplexNoise::noise(col / 400.f, row / 400.f);                   // Get the noise value for the coordinate
-            color3f color;
-            ramp(noise, color); // Define the color
+            float noise = SimplexNoise::noise(col / scale, row / scale);                   // Get the noise value for the coordinate
+            const color3f color = ramp(noise); // Define the color
             img2D1.draw_point(col, row, (float*)&color);
         }
     }
@@ -82,10 +85,9 @@ int main()
         for(int col = 0; col < img2D2.width(); ++col)
         {
             // Get the noise value for the coordinate
-            float noise = 0.65f * SimplexNoise::noise(1 * col / 400.f, 1 * row / 400.f);
-                  noise += 0.32f * SimplexNoise::noise(2 * col / 400.f, 2 * row / 400.f);
-            color3f color;
-            ramp(noise, color); // Define the color
+            float noise = 0.65f * SimplexNoise::noise(1 * col / scale, 1 * row / scale);
+                  noise += 0.32f * SimplexNoise::noise(2 * col / scale, 2 * row / scale);
+            const color3f color = ramp(noise); // Define the color
             img2D2.draw_point(col, row, (float*)&color);
         }
     }
@@ -102,11 +104,10 @@ int main()
         for(int col = 0; col < img2D3.width(); ++col)
         {
             // Get the noise value for the coordinate
-            float noise = 0.57f * SimplexNoise::noise(1 * col / 400.f, 1 * row / 400.f);
-                  noise += 0.27f * SimplexNoise::noise(2 * col / 400.f, 2 * row / 400.f);
-                  noise += 0.15f * SimplexNoise::noise(4 * col / 400.f, 4 * row / 400.f);
-            color3f color;
-            ramp(noise, color); // Define the color
+            float noise = 0.57f * SimplexNoise::noise(1 * col / scale, 1 * row / scale);
+                  noise += 0.27f * SimplexNoise::noise(2 * col / scale, 2 * row / scale);
+                  noise += 0.15f * SimplexNoise::noise(4 * col / scale, 4 * row / scale);
+            const color3f color = ramp(noise); // Define the color
             img2D3.draw_point(col, row, (float*)&color);
         }
     }
@@ -123,12 +124,11 @@ int main()
         for(int col = 0; col < img2D4.width(); ++col)
         {
             // Get the noise value for the coordinate
-            float noise = 0.56f * SimplexNoise::noise(1 * col / 400.f, 1 * row / 400.f);
-                  noise += 0.25f * SimplexNoise::noise(2 * col / 400.f, 2 * row / 400.f);
-                  noise += 0.125f * SimplexNoise::noise(4 * col / 400.f, 4 * row / 400.f);
-                  noise += 0.0625f * SimplexNoise::noise(8 * col / 400.f, 8 * row / 400.f);
-            color3f color;
-            ramp(noise, color); // Define the color
+            float noise = 0.56f * SimplexNoise::noise(1 * col / scale, 1 * row / scale);
+                  noise += 0.25f * SimplexNoise::noise(2 * col / scale, 2 * row / scale);
+                  noise += 0.125f * SimplexNoise::noise(4 * col / scale, 4 * row / scale);
+                  noise += 0.0625f * SimplexNoise::noise(8 * col / scale, 8 * row / scale);
+            const color3f color = ramp(noise); // Define the color
             img2D4.draw_point(col, row, (float*)&color);
         }
     }
@@ -145,13 +145,12 @@ int main()
         for(int col = 0; col < img2D5.width(); ++col)
         {
             // Get the noise value for the coordinate
-            float noise  = 0.53f * SimplexNoise::noise(1 * col / 400.f, 1 * row / 400.f);
-                  noise += 0.25f * SimplexNoise::noise(2 * col / 400.f, 2 * row / 400.f);
-                  noise += 0.125f * SimplexNoise::noise(4 * col / 400.f, 4 * row / 400.f);
-                  noise += 0.0625f * SimplexNoise::noise(8 * col / 400.f, 8 * row / 400.f);
-                  noise += 0.03125f * SimplexNoise::noise(16 * col / 400.f, 16 * row / 400.f);
-                  color3f color;
-            ramp(noise, color); // Define the color
+            float noise  = 0.53f * SimplexNoise::noise(1 * col / scale, 1 * row / scale);
+                  noise += 0.25f * SimplexNoise::noise(2 * col / scale, 2 * row / scale);
+                  noise += 0.125f * SimplexNoise::noise(4 * col / scale, 4 * row / scale);
+                  noise += 0.0625f * SimplexNoise::noise(8 * col / scale, 8 * row / scale);
+                  noise += 0.03125f * SimplexNoise::noise(16 * col / scale, 16 * row / scale);
+            const color3f color = ramp(noise); // Define the color
             img2D5.draw_point(col, row, (float*)&color);
         }
     }
@@ -168,14 +167,13 @@ int main()
         for(int col = 0; col < img2D6.width(); ++col)
         {
             // Get the noise value for the coordinate
-            float noise  = 0.5f * SimplexNoise::noise(1 * col / 400.f, 1 * row / 400.f);
-                  noise += 0.25f * SimplexNoise::noise(2 * col / 400.f, 2 * row / 400.f);
-                  noise += 0.125f * SimplexNoise::noise(4 * col / 400.f, 4 * row / 400.f);
-                  noise += 0.0625f * SimplexNoise::noise(8 * col / 400.f, 8 * row / 400.f);
-                  noise += 0.03125f * SimplexNoise::noise(16 * col / 400.f, 16 * row / 400.f);
-                  noise += 0.015625f * SimplexNoise::noise(32 * col / 400.f, 32 * row / 400.f);
-            color3f color;
-            ramp(noise, color); // Define the color
+            float noise  = 0.5f * SimplexNoise::noise(1 * col / scale, 1 * row / scale);
+                  noise += 0.25f * SimplexNoise::noise(2 * col / scale, 2 * row / scale);
+                  noise += 0.125f * SimplexNoise::noise(4 * col / scale, 4 * row / scale);
+                  noise += 0.0625f * SimplexNoise::noise(8 * col / scale, 8 * row / scale);
+                  noise += 0.03125f * SimplexNoise::noise(16 * col / scale, 16 * row / scale);
+                  noise += 0.015625f * SimplexNoise::noise(32 * col / scale, 32 * row / scale);
+            const color3f color = ramp(noise); // Define the color
             img2D6.draw_point(col, row, (float*)&color);
         }
     }
@@ -192,15 +190,14 @@ int main()
         for(int col = 0; col < img2D7.width(); ++col)
         {
             // Get the noise value for the coordinate
-            float noise  = 0.5f * SimplexNoise::noise(1 * col / 400.f, 1 * row / 400.f);
-                  noise += 0.25f * SimplexNoise::noise(2 * col / 400.f, 2 * row / 400.f);
-                  noise += 0.125f * SimplexNoise::noise(4 * col / 400.f, 4 * row / 400.f);
-                  noise += 0.0625f * SimplexNoise::noise(8 * col / 400.f, 8 * row / 400.f);
-                  noise += 0.03125f * SimplexNoise::noise(16 * col / 400.f, 16 * row / 400.f);
-                  noise += 0.015625f * SimplexNoise::noise(32 * col / 400.f, 32 * row / 400.f);
-                  noise += 0.0078125f * SimplexNoise::noise(64 * col / 400.f, 64 * row / 400.f);
-            color3f color;
-            ramp(noise, color); // Define the color
+            float noise  = 0.5f * SimplexNoise::noise(1 * col / scale, 1 * row / scale);
+                  noise += 0.25f * SimplexNoise::noise(2 * col / scale, 2 * row / scale);
+                  noise += 0.125f * SimplexNoise::noise(4 * col / scale, 4 * row / scale);
+                  noise += 0.0625f * SimplexNoise::noise(8 * col / scale, 8 * row / scale);
+                  noise += 0.03125f * SimplexNoise::noise(16 * col / scale, 16 * row / scale);
+                  noise += 0.015625f * SimplexNoise::noise(32 * col / scale, 32 * row / scale);
+                  noise += 0.0078125f * SimplexNoise::noise(64 * col / scale, 64 * row / scale);
+            const color3f color = ramp(noise); // Define the color
             img2D7.draw_point(col, row, (float*)&color);
         }
     }
@@ -217,27 +214,83 @@ int main()
         for(int col = 0; col < img2D8.width(); ++col)
         {
             // Get the noise value for the coordinate
-            float noise  = 0.5f * SimplexNoise::noise(1 * col / 400.f, 1 * row / 400.f);
-                  noise += 0.25f * SimplexNoise::noise(2 * col / 400.f, 2 * row / 400.f);
-                  noise += 0.125f * SimplexNoise::noise(4 * col / 400.f, 4 * row / 400.f);
-                  noise += 0.0625f * SimplexNoise::noise(8 * col / 400.f, 8 * row / 400.f);
-                  noise += 0.03125f * SimplexNoise::noise(16 * col / 400.f, 16 * row / 400.f);
-                  noise += 0.015625f * SimplexNoise::noise(32 * col / 400.f, 32 * row / 400.f);
-                  noise += 0.0078125f * SimplexNoise::noise(64 * col / 400.f, 64 * row / 400.f);
-                  noise += 0.00390625f * SimplexNoise::noise(128 * col / 400.f, 128 * row / 400.f);
+            float noise  = 0.5f * SimplexNoise::noise(1 * col / scale, 1 * row / scale);
+                  noise += 0.25f * SimplexNoise::noise(2 * col / scale, 2 * row / scale);
+                  noise += 0.125f * SimplexNoise::noise(4 * col / scale, 4 * row / scale);
+                  noise += 0.0625f * SimplexNoise::noise(8 * col / scale, 8 * row / scale);
+                  noise += 0.03125f * SimplexNoise::noise(16 * col / scale, 16 * row / scale);
+                  noise += 0.015625f * SimplexNoise::noise(32 * col / scale, 32 * row / scale);
+                  noise += 0.0078125f * SimplexNoise::noise(64 * col / scale, 64 * row / scale);
+                  noise += 0.00390625f * SimplexNoise::noise(128 * col / scale, 128 * row / scale);
                   color3f color;
-            ramp(noise, color); // Define the color
+            const color3f color = ramp(noise); // Define the color
             img2D8.draw_point(col, row, (float*)&color);
         }
     }
 //  img2D8.save("map2D8.bmp");
     CImgDisplay disp2D8(img2D8, "2D Simplex Perlin noise (8 octaves)");
-    disp2D8.move(10, 30);
+    disp2D8.move(10, 30);    
+*/
 
+    CImg<float> img(800, 480, 1, 3); // Define a 800x400 color image with a float value per color component.
+    CImgDisplay disp(img, "2D Simplex Perlin noise (8 octaves)");
+    disp.move(10, 30);
 
-    while(!disp2D1.is_closed())
-    {
-        disp2D1.wait();
+    while (!disp.is_closed()) {
+        img.fill(0.f);   // Set pixel values to 0 (color : black)
+        for (int row = 0; row < img.height(); ++row) {
+            for (int col = 0; col < img.width(); ++col) {
+                // Get the noise value for the coordinate
+                // TODO : convert to a Fractal/Brownian noise function
+          //    const float noise = SimplexNoise::noise((col + offset_x)/scale, (row + offset_y)/scale, octaves);
+                float noise = 0.5f * SimplexNoise::noise(1 * (col + offset_x) / scale, 1 * (row + offset_y) / scale);
+                noise += 0.25f * SimplexNoise::noise(2 * (col + offset_x) / scale, 2 * (row + offset_y) / scale);
+                noise += 0.125f * SimplexNoise::noise(4 * (col + offset_x) / scale, 4 * (row + offset_y) / scale);
+                noise += 0.0625f * SimplexNoise::noise(8 * (col + offset_x) / scale, 8 * (row + offset_y) / scale);
+                noise += 0.03125f * SimplexNoise::noise(16 * (col + offset_x) / scale, 16 * (row + offset_y) / scale);
+                noise += 0.015625f * SimplexNoise::noise(32 * (col + offset_x) / scale, 32 * (row + offset_y) / scale);
+                noise += 0.0078125f * SimplexNoise::noise(64 * (col + offset_x) / scale, 64 * (row + offset_y) / scale);
+                const color3f color = ramp(noise); // Define the color
+                img.draw_point(col, row, (float*)&color);
+            }
+        }
+        disp.display(img);
+        disp.wait();
+        if (disp.wheel()) {
+            const int dx = disp.mouse_x() - disp.width() / 2;
+            const int dy = disp.mouse_y() - disp.height() / 2;
+            std::cout << "wheel=" << disp.wheel() << " mouse[" << disp.mouse_x() << "," << disp.mouse_y() << "]\n";
+            std::cout << "scale=" << scale << " offset[" << offset_x << "," << offset_y << "]\n";
+            if (disp.wheel() > 0) {
+                scale *= (1.f + 0.1f*disp.wheel());
+                /* TODO
+                offset_x += disp.mouse_x();
+                offset_y += disp.mouse_y();
+                offset_x -= static_cast<int>(0.1f * scale);
+                offset_y -= static_cast<int>(0.1f * scale);
+                */
+            }
+            else {
+                scale *= (1.f + 0.1f*disp.wheel());
+                /* TODO
+                scale = 400.f;
+                offset_x = 0;
+                offset_y = 0;
+                */
+            }
+            // TODO : estimate number of octabes needed for the current scale (should NOT be linear)
+            octaves = static_cast<int>(7 * scale / 400.f);
+            std::cout << "scale=" << scale << " offset[" << offset_x << "," << offset_y << "]\n";
+            std::cout << "octaves=" << octaves << "\n";
+            disp.set_wheel(); // Reset the wheel value to 0.
+        }
+        if (disp.button() & 1) { // Left button clicked.
+            std::cout << "mouse[" << disp.mouse_x() << "," << disp.mouse_y() << "]\n";
+            std::cout << "scale=" << scale << " offset[" << offset_x << "," << offset_y << "]\n";
+        }
+        if (cimg::keyESC == disp.key()) {
+            disp.close();
+        }
     }
 
     return 0;
