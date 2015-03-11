@@ -10,8 +10,8 @@ add_executable (CImgTest
  color.cpp
  color.h
  CImg.h
- SimplexNoise/SimplexNoise.cpp
- SimplexNoise/SimplexNoise.h
+ SimplexNoise/src/SimplexNoise.cpp
+ SimplexNoise/src/SimplexNoise.h
 )
 
 if (UNIX)

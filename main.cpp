@@ -4,7 +4,7 @@ using namespace cimg_library;
 #include <cstdint>
 #include <fstream>
 
-#include "SimplexNoise/SimplexNoise.h"
+#include "SimplexNoise/src/SimplexNoise.h"
 
 #include "color.h"
 
