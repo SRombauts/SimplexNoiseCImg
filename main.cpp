@@ -4,6 +4,8 @@ using namespace cimg_library;
 #include <iostream>
 #include <cstdint>
 #include <fstream>
+#include <algorithm>
+#include <cmath>
 
 #include "SimplexNoise/src/SimplexNoise.h"
 
@@ -13,7 +15,6 @@ int main() {
     float scale     = 400.f;
     int   offset_x  = 0;
     int   offset_y  = 0;
-    int   octaves   = 7;
 
 /*
     // Integer color image (standard 2D image/file format)
@@ -233,23 +234,19 @@ int main() {
 */
 
     CImg<float> img(800, 480, 1, 3); // Define a 800x400 color image with a float value per color component.
-    CImgDisplay disp(img, "2D Simplex Perlin noise (8 octaves)");
+    CImgDisplay disp(img, "2D Simplex Perlin noise");
     disp.move(10, 30);
 
     while (!disp.is_closed()) {
-        img.fill(0.f);   // Set pixel values to 0 (color : black)
+        img.fill(0.f);                      // Set/reset pixel values to 0 (color : black)
+        const SimplexNoise simplex(1.0f, 0.5f);   // Amplitude of 0.5 for the 1st octave : sum ~1.0f
+        // TODO : estimate number of octabes needed for the current scale (should NOT be linear)
+        const int octaves = static_cast<int>(1 + std::log(scale));
+        std::cout << "octaves=" << octaves << "\n";
         for (int row = 0; row < img.height(); ++row) {
             for (int col = 0; col < img.width(); ++col) {
                 // Get the noise value for the coordinate
-                // TODO : convert to a Fractal/Brownian noise function
-          //    const float noise = SimplexNoise::noise((col + offset_x)/scale, (row + offset_y)/scale, octaves);
-                float noise = 0.5f * SimplexNoise::noise(1 * (col + offset_x) / scale, 1 * (row + offset_y) / scale);
-                noise += 0.25f * SimplexNoise::noise(2 * (col + offset_x) / scale, 2 * (row + offset_y) / scale);
-                noise += 0.125f * SimplexNoise::noise(4 * (col + offset_x) / scale, 4 * (row + offset_y) / scale);
-                noise += 0.0625f * SimplexNoise::noise(8 * (col + offset_x) / scale, 8 * (row + offset_y) / scale);
-                noise += 0.03125f * SimplexNoise::noise(16 * (col + offset_x) / scale, 16 * (row + offset_y) / scale);
-                noise += 0.015625f * SimplexNoise::noise(32 * (col + offset_x) / scale, 32 * (row + offset_y) / scale);
-                noise += 0.0078125f * SimplexNoise::noise(64 * (col + offset_x) / scale, 64 * (row + offset_y) / scale);
+                const float noise = simplex.fractal(octaves, (col + offset_x)/scale, (row + offset_y)/scale);
                 const color3f color = ramp(noise); // Define the color
                 img.draw_point(col, row, (float*)&color);
             }
@@ -271,17 +268,15 @@ int main() {
                 */
             }
             else {
-                scale *= (1.f + 0.1f*disp.wheel());
+
+                scale *= (1.f + 0.1f*std::min(disp.wheel(),10));
                 /* TODO
                 scale = 400.f;
                 offset_x = 0;
                 offset_y = 0;
                 */
             }
-            // TODO : estimate number of octabes needed for the current scale (should NOT be linear)
-            octaves = static_cast<int>(7 * scale / 400.f);
             std::cout << "scale=" << scale << " offset[" << offset_x << "," << offset_y << "]\n";
-            std::cout << "octaves=" << octaves << "\n";
             disp.set_wheel(); // Reset the wheel value to 0.
         }
         if (disp.button() & 1) { // Left button clicked.

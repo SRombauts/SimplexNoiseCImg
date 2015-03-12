@@ -13,6 +13,11 @@ add_executable (CImgTest
  SimplexNoise/src/SimplexNoise.cpp
  SimplexNoise/src/SimplexNoise.h
 )
+source_group(src FILES main.cpp)
+source_group(cimg FILES CImg.h)
+source_group(color FILES color.cpp color.h)
+source_group(lib SimplexNoise/src/SimplexNoise.*)
+
 
 if (UNIX)
     target_link_libraries (CImgTest X11 pthread)
