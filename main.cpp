@@ -238,22 +238,25 @@ int main() {
     disp.move(10, 30);
 
     while (!disp.is_closed()) {
-        img.fill(0.f);                      // Set/reset pixel values to 0 (color : black)
-        const SimplexNoise simplex(1.0f, 0.5f);   // Amplitude of 0.5 for the 1st octave : sum ~1.0f
-        // TODO : estimate number of octabes needed for the current scale (should NOT be linear)
-        const int octaves = static_cast<int>(1 + std::log(scale));
+        const SimplexNoise simplex(1.0f/scale, 0.5f);   // Amplitude of 0.5 for the 1st octave : sum ~1.0f
+        const int octaves = static_cast<int>(2 + std::log(scale)); // Estimate number of octaves needed for the current scale
         std::cout << "octaves=" << octaves << "\n";
         for (int row = 0; row < img.height(); ++row) {
+            const float y = static_cast<float>(row + offset_y);
             for (int col = 0; col < img.width(); ++col) {
+                const float x = static_cast<float>(col + offset_x);
+                
                 // Get the noise value for the coordinate
-                const float noise = simplex.fractal(octaves, (col + offset_x)/scale, (row + offset_y)/scale);
-                const color3f color = ramp(noise); // Define the color
+                const float noise = simplex.fractal(octaves, x, y);
+                const color3f color = ramp(noise); // convert to color
                 img.draw_point(col, row, (float*)&color);
             }
         }
         disp.display(img);
+
         disp.wait();
         if (disp.wheel()) {
+            // TODO center image instead of focus on the left/up corner
             const int dx = disp.mouse_x() - disp.width() / 2;
             const int dy = disp.mouse_y() - disp.height() / 2;
             std::cout << "wheel=" << disp.wheel() << " mouse[" << disp.mouse_x() << "," << disp.mouse_y() << "]\n";
