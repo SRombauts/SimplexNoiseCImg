@@ -6,10 +6,30 @@ using namespace cimg_library;
 #include <fstream>
 #include <algorithm>
 #include <cmath>
+#include <chrono> // NOLINT(build/c++11)
 
 #include "SimplexNoise/src/SimplexNoise.h"
 
 #include "color.h"
+
+/// Time measure using C++11 std::chrono
+class Measure {
+public:
+    /// Start a time measure
+    void start() {
+        // std::chrono::steady_clock would be more stable, but does not exist in Travis CI GCC 4.6
+        mStartTime = std::chrono::high_resolution_clock::now();
+    }
+    /// Get time elapsed since first time measure
+    double get() {
+        auto diffTime = (std::chrono::high_resolution_clock::now() - mStartTime);
+        return std::chrono::duration<double, std::milli>(diffTime).count();
+    }
+
+private:
+    std::chrono::high_resolution_clock::time_point   mStartTime; ///< Store the first time measure
+};
+
 
 int main() {
     float scale     = 400.f;
@@ -238,6 +258,8 @@ int main() {
     disp.move(10, 30);
 
     while (!disp.is_closed()) {
+        Measure measure;
+        measure.start();
         const SimplexNoise simplex(1.0f/scale, 0.5f);   // Amplitude of 0.5 for the 1st octave : sum ~1.0f
         const int octaves = static_cast<int>(2 + std::log(scale)); // Estimate number of octaves needed for the current scale
         std::cout << "octaves=" << octaves << "\n";
@@ -253,6 +275,8 @@ int main() {
             }
         }
         disp.display(img);
+        const double diff_ms = measure.get();
+        std::cout << std::fixed << diff_ms << "ms\n";
 
         disp.wait();
         if (disp.wheel()) {
