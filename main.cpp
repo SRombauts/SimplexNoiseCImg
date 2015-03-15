@@ -33,7 +33,7 @@ private:
 
 int main() {
     float scale     = 400.f;
-	float offset_x	= 0.0f;
+    float offset_x  = 0.0f;
     float offset_y  = 0.0f;
     float offset_z  = 0.0f;
     int last_mouse_x = 0;
@@ -50,15 +50,14 @@ int main() {
         measure.start();
         const SimplexNoise simplex(1.0f/scale, 0.5f, lacunarity, persistance);   // Amplitude of 0.5 for the 1st octave : sum ~1.0f
         const int octaves = static_cast<int>(2 + std::log(scale)); // Estimate number of octaves needed for the current scale
-		std::ostringstream title;
-		title << "2D Simplex Perlin noise (" << octaves << " octaves)";
-		disp.set_title(title.str().c_str());
+        std::ostringstream title;
+        title << "2D Simplex Perlin noise (" << octaves << " octaves)";
+        disp.set_title(title.str().c_str());
         for (int row = 0; row < img.height(); ++row) {
-			const float y = static_cast<float>(row - img.height()/2 + offset_y*scale);
+            const float y = static_cast<float>(row - img.height()/2 + offset_y*scale);
             for (int col = 0; col < img.width(); ++col) {
-				const float x = static_cast<float>(col - img.width()/2 + offset_x*scale);
+                const float x = static_cast<float>(col - img.width()/2 + offset_x*scale);
                 
-                // TODO(SRombauts): Add some height offset for more realistic results (use a basic noise for this)
                 // TODO(SRombauts): Generate "biomes", ie smooth geographic variation in frequency & amplitude 
                 // TODO(SRombauts): Add 'erosion' with simple smoothing like exponential
                 // Get the noise value for the coordinate
@@ -83,7 +82,7 @@ int main() {
                 */
             }
             else {
-				scale *= (1.f + 0.090909090909f*std::min(disp.wheel(), 10));
+                scale *= (1.f + 0.090909090909f*std::min(disp.wheel(), 10));
             }
             std::cout << "scale=" << scale << " offset[" << offset_x << "," << offset_y << "]\n";
             disp.set_wheel(); // Reset the wheel value to 0.
@@ -103,27 +102,27 @@ int main() {
             last_mouse_y = 0;
         }
         switch (disp.key()) {
-		// Offset X
+        // Offset X
         case cimg::keyQ:
-			offset_x -= 100.f/scale;
-			break;
-		case cimg::keyD:
-			offset_x += 100.f/scale;
-			break;
+            offset_x -= 100.f/scale;
+            break;
+        case cimg::keyD:
+            offset_x += 100.f/scale;
+            break;
         // Offset Y
         case cimg::keyZ:
-			offset_y -= 100.f/scale;
-			break;
-		case cimg::keyS:
-			offset_y += 100.f/scale;
-			break;
+            offset_y -= 100.f/scale;
+            break;
+        case cimg::keyS:
+            offset_y += 100.f/scale;
+            break;
         // Zoom
         case cimg::keyA:
-			scale *= 0.833333333333333f;
-			break;
-		case cimg::keyE:
-			scale *= 1.2f;
-			break;
+            scale *= 0.833333333333333f;
+            break;
+        case cimg::keyE:
+            scale *= 1.2f;
+            break;
         // Lacunarity
         case cimg::keyL:
             lacunarity += 0.1f;
@@ -148,8 +147,8 @@ int main() {
         // Quit
         case cimg::keyESC:
             disp.close();
-			break;
-		}
+            break;
+        }
         std::cout << "scale=" << scale << " offset[" << offset_x << "," << offset_y << "]\n";
         std::cout << "lacunarity=" << lacunarity << " persistance=" << persistance << "\n";
     }
