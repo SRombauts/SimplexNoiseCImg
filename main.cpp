@@ -1,6 +1,3 @@
-#include "CImg.h"
-using namespace cimg_library;
-
 #include <iostream>
 #include <sstream>
 #include <cstdint>
@@ -11,6 +8,7 @@ using namespace cimg_library;
 #include "SimplexNoise/src/SimplexNoise.h"
 
 #include "color.h"
+#include "img.h"
 
 /// Time measure using C++11 std::chrono
 class Measure {
@@ -36,23 +34,26 @@ int main() {
     float offset_x  = 0.0f;
     float offset_y  = 0.0f;
     float offset_z  = 0.0f;
-    int last_mouse_x = 0;
-    int last_mouse_y = 0;
     float lacunarity = 2.0f;
     float persistance = 0.5f;
+/*
+    float lacunarity = 1.55f;
+    float persistance = 0.65f;
+*/    
+    // TODO NOCOMMIT :
+    float min;
+    float max;
 
-    CImg<float> img(800, 480, 1, 3); // Define a 800x400 color image with a float value per color component.
-    CImgDisplay disp(img, "2D Simplex Perlin noise");
-    disp.move(10, 30);
+    Img img;
 
-    while (!disp.is_closed()) {
+    while (!img.is_closed()) {
         Measure measure;
         measure.start();
         const SimplexNoise simplex(1.0f/scale, 0.5f, lacunarity, persistance);   // Amplitude of 0.5 for the 1st octave : sum ~1.0f
         const int octaves = static_cast<int>(2 + std::log(scale)); // Estimate number of octaves needed for the current scale
         std::ostringstream title;
         title << "2D Simplex Perlin noise (" << octaves << " octaves)";
-        disp.set_title(title.str().c_str());
+        img.set_title(title.str().c_str());
         for (int row = 0; row < img.height(); ++row) {
             const float y = static_cast<float>(row - img.height()/2 + offset_y*scale);
             for (int col = 0; col < img.width(); ++col) {
@@ -60,97 +61,22 @@ int main() {
                 
                 // TODO(SRombauts): Generate "biomes", ie smooth geographic variation in frequency & amplitude 
                 // TODO(SRombauts): Add 'erosion' with simple smoothing like exponential
+            //  const float biome = SimplexNoise::noise(x, y);
+            //  const float noise = 0.5f * biome + 0.5f * simplex.fractal(octaves, x, y) + offset_z;
                 // Get the noise value for the coordinate
                 const float noise = simplex.fractal(octaves, x, y) + offset_z;
+                min = std::min(min, noise);
+                max = std::min(max, noise);
                 const color3f color = ramp(noise); // convert to color
                 img.draw_point(col, row, (float*)&color);
             }
         }
-        disp.display(img);
+        img.display();
         const double diff_ms = measure.get();
-        std::cout << std::fixed << diff_ms << "ms\n";
+        std::cout << std::fixed << diff_ms << "ms - ";
+        std::cout << "minmax[" << min << "," << max << "]\n";
 
-        disp.wait();
-        if (disp.wheel()) {
-            std::cout << "wheel=" << disp.wheel() << " mouse[" << disp.mouse_x() << "," << disp.mouse_y() << "]\n";
-            std::cout << "scale=" << scale << " offset[" << offset_x << "," << offset_y << "]\n";
-            if (disp.wheel() > 0) {
-                scale *= (1.f + 0.1f*disp.wheel());
-                /* TODO(SRombauts): add offset based on mouse position
-                offset_x -= static_cast<int>(0.1f * scale);
-                offset_y -= static_cast<int>(0.1f * scale);
-                */
-            }
-            else {
-                scale *= (1.f + 0.090909090909f*std::min(disp.wheel(), 10));
-            }
-            std::cout << "scale=" << scale << " offset[" << offset_x << "," << offset_y << "]\n";
-            disp.set_wheel(); // Reset the wheel value to 0.
-        }
-        if (disp.button() & 1) { // Left button clicked.
-            // drag window with mouse drag
-            std::cout << "mouse[" << disp.mouse_x() << "," << disp.mouse_y() << "]\n";
-            if ((last_mouse_x != 0) || (last_mouse_y != 0)) {
-                offset_x -= (disp.mouse_x() - last_mouse_x);
-                offset_y -= (disp.mouse_y() - last_mouse_y);
-            }
-            last_mouse_x = disp.mouse_x();
-            last_mouse_y = disp.mouse_y();
-        }
-        else {
-            last_mouse_x = 0;
-            last_mouse_y = 0;
-        }
-        switch (disp.key()) {
-        // Offset X
-        case cimg::keyQ:
-            offset_x -= 100.f/scale;
-            break;
-        case cimg::keyD:
-            offset_x += 100.f/scale;
-            break;
-        // Offset Y
-        case cimg::keyZ:
-            offset_y -= 100.f/scale;
-            break;
-        case cimg::keyS:
-            offset_y += 100.f/scale;
-            break;
-        // Zoom
-        case cimg::keyA:
-            scale *= 0.833333333333333f;
-            break;
-        case cimg::keyE:
-            scale *= 1.2f;
-            break;
-        // Lacunarity
-        case cimg::keyL:
-            lacunarity += 0.1f;
-            break;
-        case cimg::keyM:
-            lacunarity -= 0.1f;
-            break;
-        // Persistence
-        case cimg::keyP:
-            persistance += 0.05f;
-            break;
-        case cimg::keyO:
-            persistance -= 0.05f;
-            break;
-        // Vertical offset
-        case cimg::keyI:
-            offset_z += 0.05f;
-            break;
-        case cimg::keyK:
-            offset_z -= 0.05f;
-            break;
-        // Quit
-        case cimg::keyESC:
-            disp.close();
-            break;
-        }
-        std::cout << "scale=" << scale << " offset[" << offset_x << "," << offset_y << "]\n";
-        std::cout << "lacunarity=" << lacunarity << " persistance=" << persistance << "\n";
+        img.user(scale, offset_x, offset_y, offset_z, lacunarity, persistance);
     }
 
     return 0;

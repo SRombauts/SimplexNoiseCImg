@@ -10,9 +10,9 @@ color3f::color3f()
 
 color3f::color3f(uint8_t _r, uint8_t _g, uint8_t _b)
 {
-    r = _r/256.f;
-    g = _g/256.f;
-    b = _b/256.f;
+    r = _r;
+    g = _g;
+    b = _b;
 }
 
 color3f lerp(color3f x, color3f y, float a)
