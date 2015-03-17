@@ -14,6 +14,7 @@ add_executable (CImgTest
  CImg.h
  SimplexNoise/src/SimplexNoise.cpp
  SimplexNoise/src/SimplexNoise.h
+ README.md
 )
 source_group(src FILES main.cpp color.cpp color.h img.cpp img.h)
 source_group(cimg FILES CImg.h)
